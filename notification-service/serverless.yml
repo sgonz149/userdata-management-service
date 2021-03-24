@@ -1,0 +1,29 @@
+service: notification-service
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-2
+  lambdaHashingVersion: 20201221
+
+  #environment:
+  iamRoleStatements:
+   - Effect: Allow
+     Action:
+      - ses:*
+     Resource: '*'
+
+
+
+functions:
+  sendEmail:
+     handler: sendEmail.sendEmail
+     events:
+      - http:
+         path: email
+         method: post
+         cors: true
+
+

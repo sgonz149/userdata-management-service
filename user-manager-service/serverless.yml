@@ -1,0 +1,70 @@
+service: user-manager-service
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-2
+  lambdaHashingVersion: 20201221
+
+  environment:
+   DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+       - dynamodb:Query
+       - dynamodb:Scan
+       - dynamodb:GetItem
+       - dynamodb:PutItem
+       - dynamodb:UpdateItem
+       - dynamodb:DeleteItem
+
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+
+functions:
+  create:
+    handler: ./user/createUser.create
+    events:
+     - http:
+        path: user
+        method: post
+  update:
+    handler: ./user/updateUser.update
+    events:
+     - http:
+        path: user/{id}
+        method: post
+
+  get:
+    handler: ./user/getUsers.get
+    events:
+     - http:
+        path: user/{id}
+        method: get
+
+  delete:
+    handler: ./user/deleteUser.delete
+    events:
+     - http:
+        path: user/{id}
+        method: delete 
+
+resources:
+ Resources:
+  usersTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+     AttributeDefinitions:
+      - 
+        AttributeName: id
+        AttributeType: S
+     KeySchema:
+      - 
+        AttributeName: id
+        KeyType: HASH
+     ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+     TableName: ${self:provider.environment.DYNAMODB_TABLE}
