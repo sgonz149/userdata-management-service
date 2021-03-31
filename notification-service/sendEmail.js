@@ -10,7 +10,7 @@ module.exports.sendEmail = async event => {
     
     //console.log("Hello" + JSON.parse(event.body));
     const body = JSON.parse(event.body);
-    const {to} = body;
+    const {to, from, content, subject} = body;
     console.log("ran");
     // Create sendEmail params 
     const params = {
@@ -22,11 +22,11 @@ module.exports.sendEmail = async event => {
         },
         Message: { 
             Body: { 
-                Text: { Data: "Test"}
+                Text: { Data: content}
             },
-            Subject: {Data: "Test"}
+            Subject: {Data: subject}
         },
-        Source: "softwareprojectstest@gmail.com"
+        Source: from
     };
     console.log("ran emails");
     // Create the promise and SES and SQS service object
