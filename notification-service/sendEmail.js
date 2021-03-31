@@ -4,44 +4,44 @@ const AWS = require('aws-sdk');
  // Set the region 
 //AWS.config.update({ region: 'us-east-2' });
 
-module.exports.sendEmail = async (event) => {
-    const { to, from, subject, content } = JSON.parse(event.body);
+
+module.exports.sendEmail = async event => {
+
+    
+    //console.log("Hello" + JSON.parse(event.body));
+    const body = JSON.parse(event.body);
+    const {to} = body;
     console.log("ran");
     // Create sendEmail params 
     const params = {
+        
+
         Destination: { 
             
-            ToAddresses: [
-                to
-                
-            ],
+            ToAddresses: [to]
         },
         Message: { 
             Body: { 
-                Text: {
-                    
-                    Data: content
-                },
+                Text: { Data: "Test"}
             },
-            Subject: {
-                
-                Data: subject
-            },
+            Subject: {Data: "Test"}
         },
-        Source: from
-        
+        Source: "softwareprojectstest@gmail.com"
     };
     console.log("ran emails");
-    // Create the promise and SES service object
+    // Create the promise and SES and SQS service object
     try {
         await new AWS.SES().sendEmail(params).promise();
         console.log("ran emails successfull");
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Success!' })
+            
+
+        };
     }
     catch(error){
         console.log("error sending", error);
 
-    }
-    // Handle promise's fulfilled/rejected states
-
-    
+    }   
 };
