@@ -6,6 +6,7 @@ provider:
   name: aws
   runtime: nodejs14.x
   region: us-east-2
+  stage: dev
   lambdaHashingVersion: 20201221
   iam:
    role:
@@ -41,5 +42,16 @@ resources:
       Type: "AWS::SQS::Queue"
       Properties:
         QueueName: "MyQueue"
+  Outputs:
+    MyQueueArn:
+      Value: !GetAtt MyQueue.Arn
+      Export:
+        Name: MyQueue-${self:provider.stage}-Arn
+
+    MyQueueUrl:
+      Value: !Ref MyQueue
+      Export:
+        Name: MyQueue-${self:provider.stage}-Url
+
         
 
